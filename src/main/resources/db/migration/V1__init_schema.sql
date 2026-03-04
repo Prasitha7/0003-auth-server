@@ -1,0 +1,92 @@
+CREATE TABLE roles (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE users (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(64) NOT NULL UNIQUE,
+    email VARCHAR(128) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    account_non_locked BOOLEAN NOT NULL DEFAULT TRUE,
+    failed_login_attempts INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE user_roles (
+    user_id BIGINT NOT NULL,
+    role_id BIGINT NOT NULL,
+    PRIMARY KEY (user_id, role_id),
+    CONSTRAINT fk_user_roles_user FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_user_roles_role FOREIGN KEY (role_id) REFERENCES roles(id)
+);
+
+CREATE TABLE oauth2_registered_client (
+    id varchar(100) NOT NULL,
+    client_id varchar(100) NOT NULL,
+    client_id_issued_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    client_secret varchar(200) DEFAULT NULL,
+    client_secret_expires_at timestamp DEFAULT NULL,
+    client_name varchar(200) NOT NULL,
+    client_authentication_methods varchar(1000) NOT NULL,
+    authorization_grant_types varchar(1000) NOT NULL,
+    redirect_uris varchar(1000) DEFAULT NULL,
+    post_logout_redirect_uris varchar(1000) DEFAULT NULL,
+    scopes varchar(1000) NOT NULL,
+    client_settings varchar(2000) NOT NULL,
+    token_settings varchar(2000) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE oauth2_authorization_consent (
+    registered_client_id varchar(100) NOT NULL,
+    principal_name varchar(200) NOT NULL,
+    authorities varchar(1000) NOT NULL,
+    PRIMARY KEY (registered_client_id, principal_name)
+);
+
+CREATE TABLE oauth2_authorization (
+    id varchar(100) NOT NULL,
+    registered_client_id varchar(100) NOT NULL,
+    principal_name varchar(200) NOT NULL,
+    authorization_grant_type varchar(100) NOT NULL,
+    authorized_scopes varchar(1000) DEFAULT NULL,
+    attributes text DEFAULT NULL,
+    state varchar(500) DEFAULT NULL,
+    authorization_code_value text DEFAULT NULL,
+    authorization_code_issued_at timestamp DEFAULT NULL,
+    authorization_code_expires_at timestamp DEFAULT NULL,
+    authorization_code_metadata text DEFAULT NULL,
+    access_token_value text DEFAULT NULL,
+    access_token_issued_at timestamp DEFAULT NULL,
+    access_token_expires_at timestamp DEFAULT NULL,
+    access_token_metadata text DEFAULT NULL,
+    access_token_type varchar(100) DEFAULT NULL,
+    access_token_scopes varchar(1000) DEFAULT NULL,
+    oidc_id_token_value text DEFAULT NULL,
+    oidc_id_token_issued_at timestamp DEFAULT NULL,
+    oidc_id_token_expires_at timestamp DEFAULT NULL,
+    oidc_id_token_metadata text DEFAULT NULL,
+    refresh_token_value text DEFAULT NULL,
+    refresh_token_issued_at timestamp DEFAULT NULL,
+    refresh_token_expires_at timestamp DEFAULT NULL,
+    refresh_token_metadata text DEFAULT NULL,
+    user_code_value text DEFAULT NULL,
+    user_code_issued_at timestamp DEFAULT NULL,
+    user_code_expires_at timestamp DEFAULT NULL,
+    user_code_metadata text DEFAULT NULL,
+    device_code_value text DEFAULT NULL,
+    device_code_issued_at timestamp DEFAULT NULL,
+    device_code_expires_at timestamp DEFAULT NULL,
+    device_code_metadata text DEFAULT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE oauth2_authorization_server_metadata (
+    id varchar(100) NOT NULL,
+    metadata_key varchar(100) NOT NULL,
+    metadata_value text NOT NULL,
+    PRIMARY KEY (id, metadata_key)
+);
